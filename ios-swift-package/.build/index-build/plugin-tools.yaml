@@ -1,0 +1,47 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "KMPLiveActivities-arm64-apple-macosx-debug.module": ["<KMPLiveActivities-arm64-apple-macosx-debug.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<KMPLiveActivities-arm64-apple-macosx-debug.module>"]
+  "test": ["<KMPLiveActivities-arm64-apple-macosx-debug.module>"]
+default: "main"
+nodes:
+  "/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/Sources/KMPLiveActivities/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/Sources/KMPLiveActivities/KMPLiveActivityAttributes.swift"]
+    outputs: ["/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/sources"]
+    description: "Write auxiliary file /Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/sources"
+
+  "/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/swift-version-3EF66BD97523F833.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Applications/Xcode_26.4.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"]
+    outputs: ["/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/swift-version-3EF66BD97523F833.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/swift-version-3EF66BD97523F833.txt"
+
+  "<KMPLiveActivities-arm64-apple-macosx-debug.module>":
+    tool: phony
+    inputs: ["/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/Modules/KMPLiveActivities.swiftmodule"]
+    outputs: ["<KMPLiveActivities-arm64-apple-macosx-debug.module>"]
+
+  "C.KMPLiveActivities-arm64-apple-macosx-debug.module":
+    tool: shell
+    inputs: ["/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/Sources/KMPLiveActivities/KMPLiveActivityAttributes.swift","/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/swift-version-3EF66BD97523F833.txt","/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/sources"]
+    outputs: ["/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/Modules/KMPLiveActivities.swiftmodule"]
+    description: "Compiling Swift Module 'KMPLiveActivities' (1 sources)"
+    args: ["/Applications/Xcode_26.4.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","KMPLiveActivities","-emit-dependencies","-emit-module","-emit-module-path","/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/Modules/KMPLiveActivities.swiftmodule","-output-file-map","/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/output-file-map.json","-parse-as-library","-incremental","@/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/sources","-I","/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx10.13","-incremental","-enable-batch-mode","-serialize-diagnostics","-Onone","-enable-testing","-j11","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/include/KMPLiveActivities-Swift.h","-swift-version","5","-Xfrontend","-experimental-lazy-typecheck","-Xfrontend","-experimental-skip-all-function-bodies","-Xfrontend","-experimental-allow-module-with-compiler-errors","-Xfrontend","-empty-abi-descriptor","-plugin-path","/Applications/Xcode_26.4.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode_26.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-F","/Applications/Xcode_26.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-I","/Applications/Xcode_26.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode_26.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode_26.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk","-Xcc","-F","-Xcc","/Applications/Xcode_26.4.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","ios_swift_package"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/Sources/KMPLiveActivities/","/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/Package.swift","/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

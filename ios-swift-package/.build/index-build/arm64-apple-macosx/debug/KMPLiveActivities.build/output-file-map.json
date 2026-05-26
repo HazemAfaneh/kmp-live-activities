@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/primary.swiftdeps"
+  },
+  "/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/Sources/KMPLiveActivities/KMPLiveActivityAttributes.swift": {
+    "dependencies": "/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/KMPLiveActivityAttributes.d",
+    "object": "/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/KMPLiveActivityAttributes.swift.o",
+    "swiftmodule": "/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/KMPLiveActivityAttributes~partial.swiftmodule",
+    "swift-dependencies": "/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/KMPLiveActivityAttributes.swiftdeps",
+    "diagnostics": "/Users/hazemafaneh/kmp-liveactivities/ios-swift-package/.build/index-build/arm64-apple-macosx/debug/KMPLiveActivities.build/KMPLiveActivityAttributes.dia"
+  }
+}

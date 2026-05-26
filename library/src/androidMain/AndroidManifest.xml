@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Required so the consuming app can post Live Update notifications on Android 13+. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!--
+        Android 16 (API 36) requires this normal-protection permission for the system to promote
+        an ongoing notification to a status-bar chip + top-of-shade Live Update. No runtime
+        request is needed; declaring it in the merged manifest is sufficient.
+    -->
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
+    <!-- Required by the optional LiveActivityForegroundService. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <application>
+        <service
+            android:name="io.github.hazemafaneh.liveactivities.LiveActivityForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="shortService" />
+
+        <receiver
+            android:name="io.github.hazemafaneh.liveactivities.LiveActivityDismissReceiver"
+            android:exported="false" />
+    </application>
+
+</manifest>
