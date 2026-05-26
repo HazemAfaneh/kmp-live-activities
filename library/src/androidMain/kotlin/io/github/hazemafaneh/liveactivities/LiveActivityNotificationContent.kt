@@ -1,5 +1,7 @@
 package io.github.hazemafaneh.liveactivities
 
+import androidx.annotation.ColorInt
+
 /**
  * Platform-neutral description of what an Android Live Update notification should show.
  *
@@ -12,6 +14,8 @@ package io.github.hazemafaneh.liveactivities
  * @property subText optional short text shown next to the app name.
  * @property statusChip optional per-update override of the status-bar chip. When `null`, the
  *   builder falls back to [LiveActivityAndroidConfig.statusChip] from the activity config.
+ * @property accentColor optional ARGB color passed to `NotificationCompat.Builder.setColor`,
+ *   tinting the app name and small-icon background in the shade and on the lock screen.
  */
 public data class LiveActivityNotificationContent(
     public val title: String,
@@ -19,4 +23,5 @@ public data class LiveActivityNotificationContent(
     public val progressStyle: ProgressStyleData? = null,
     public val subText: String? = null,
     public val statusChip: StatusChipConfig? = null,
+    @param:ColorInt public val accentColor: Int? = null,
 )

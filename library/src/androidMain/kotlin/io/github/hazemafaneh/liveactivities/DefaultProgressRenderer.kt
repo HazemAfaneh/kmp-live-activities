@@ -1,5 +1,7 @@
 package io.github.hazemafaneh.liveactivities
 
+import androidx.annotation.ColorInt
+
 /**
  * A [LiveActivityRenderer] for the common case: a title, body text, and a
  * `NotificationCompat.ProgressStyle` configured from state.
@@ -26,6 +28,8 @@ package io.github.hazemafaneh.liveactivities
  *   style so the first post is already promotion-eligible.
  * @param subText extracts optional short text shown next to the app name.
  * @param statusChip extracts an optional per-update status-bar chip override.
+ * @param accentColor extracts an optional ARGB color forwarded to
+ *   `NotificationCompat.Builder.setColor`.
  */
 public class DefaultProgressRenderer<S : LiveActivityContentState>(
     private val title: (S) -> String,
@@ -33,6 +37,7 @@ public class DefaultProgressRenderer<S : LiveActivityContentState>(
     private val progressStyle: (S) -> ProgressStyleData = { ProgressStyleData(progress = 0) },
     private val subText: (S) -> String? = { null },
     private val statusChip: (S) -> StatusChipConfig? = { null },
+    @param:ColorInt private val accentColor: (S) -> Int? = { null },
 ) : LiveActivityRenderer<S> {
 
     override fun render(state: S): LiveActivityNotificationContent {
@@ -44,6 +49,7 @@ public class DefaultProgressRenderer<S : LiveActivityContentState>(
             progressStyle = sanitized,
             subText = subText(state),
             statusChip = statusChip(state),
+            accentColor = accentColor(state),
         )
     }
 

@@ -40,6 +40,8 @@ public actual object LiveActivityManager {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val notificationIds: AtomicInteger = AtomicInteger(STARTING_NOTIFICATION_ID)
     private val renderers: MutableMap<KClass<*>, LiveActivityRenderer<*>> = ConcurrentHashMap()
+    private val attributedRenderers: MutableMap<KClass<*>, AttributedLiveActivityRenderer<*, *>> =
+        ConcurrentHashMap()
     private val tracked: MutableMap<String, TrackedActivity> = ConcurrentHashMap()
     private val restoreSignal: CompletableDeferred<Unit> = CompletableDeferred()
 
@@ -88,6 +90,22 @@ public actual object LiveActivityManager {
     ) {
         registerRenderer(S::class, renderer)
     }
+
+    /**
+     * Registers the attributed [renderer] used to draw notifications for content states of type
+     * [stateType]. Takes precedence over any plain [LiveActivityRenderer] registered for the same
+     * type.
+     *
+     * Use this overload when the rendered content depends on attribute fields that aren't part
+     * of the per-update state (e.g. vendor name captured at start time).
+     */
+    public fun <A : LiveActivityAttributes, S : LiveActivityContentState> registerAttributedRenderer(
+        stateType: KClass<S>,
+        renderer: AttributedLiveActivityRenderer<A, S>,
+    ) {
+        attributedRenderers[stateType] = renderer
+    }
+
 
     /**
      * Starts or stops the bundled [LiveActivityForegroundService], which keeps the process alive
@@ -210,7 +228,7 @@ public actual object LiveActivityManager {
 
     private fun postNotification(context: Context, entry: TrackedActivity) {
         val state = entry.state.value
-        val content = rendererFor(state).render(state)
+        val content = renderContent(entry.handle.attributes, state)
         val built = AndroidNotifications.build(
             context = context,
             config = entry.config,
@@ -269,11 +287,18 @@ public actual object LiveActivityManager {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun rendererFor(
+    private fun renderContent(
+        attributes: LiveActivityAttributes,
         state: LiveActivityContentState,
-    ): LiveActivityRenderer<LiveActivityContentState> =
-        (renderers[state::class] as? LiveActivityRenderer<LiveActivityContentState>)
+    ): LiveActivityNotificationContent {
+        val attributed = attributedRenderers[state::class]
+            as? AttributedLiveActivityRenderer<LiveActivityAttributes, LiveActivityContentState>
+        if (attributed != null) return attributed.render(attributes, state)
+        val plain = renderers[state::class]
+            as? LiveActivityRenderer<LiveActivityContentState>
             ?: FALLBACK_RENDERER
+        return plain.render(state)
+    }
 
     private fun refreshAuthorization() {
         val context = appContext ?: return

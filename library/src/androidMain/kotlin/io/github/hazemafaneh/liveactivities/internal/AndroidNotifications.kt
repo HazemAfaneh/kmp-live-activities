@@ -82,6 +82,7 @@ internal object AndroidNotifications {
             .requestPromotion()
 
         content.subText?.let(builder::setSubText)
+        content.accentColor?.let(builder::setColor)
 
         val chip = content.statusChip ?: config.androidConfig.statusChip
         applyStatusChip(builder, chip)
