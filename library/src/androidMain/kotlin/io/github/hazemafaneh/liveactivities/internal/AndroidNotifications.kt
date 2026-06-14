@@ -81,6 +81,8 @@ internal object AndroidNotifications {
             .setDeleteIntent(buildDeleteIntent(context, activityId, notificationId))
             .requestPromotion()
 
+        buildContentIntent(context, notificationId)?.let(builder::setContentIntent)
+
         content.subText?.let(builder::setSubText)
         content.accentColor?.let(builder::setColor)
 
@@ -165,6 +167,32 @@ internal object AndroidNotifications {
                     .setShowWhen(chip.showWhen)
             }
         }
+    }
+
+    /**
+     * Builds the intent fired when the user taps the notification body. Defaults to the app's own
+     * launcher activity, resolved from the package manager, so tapping a Live Update opens the app
+     * (matching the iOS behaviour). Returns `null` if the app declares no launcher activity.
+     */
+    private fun buildContentIntent(
+        context: Context,
+        notificationId: Int,
+    ): PendingIntent? {
+        val launch = context.packageManager.getLaunchIntentForPackage(context.packageName)
+            ?: run {
+                Log.w(TAG, "No launcher activity found for ${'$'}{context.packageName}; tap will be a no-op.")
+                return null
+            }
+        launch.apply {
+            // Bring an existing task to the front rather than spawning a duplicate activity.
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+        return PendingIntent.getActivity(
+            context,
+            notificationId,
+            launch,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
     }
 
     private fun buildDeleteIntent(
