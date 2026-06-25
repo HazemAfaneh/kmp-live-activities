@@ -81,7 +81,8 @@ internal object AndroidNotifications {
             .setDeleteIntent(buildDeleteIntent(context, activityId, notificationId))
             .requestPromotion()
 
-        buildContentIntent(context, notificationId)?.let(builder::setContentIntent)
+        val tapIntent = content.contentIntent ?: buildContentIntent(context, notificationId)
+        tapIntent?.let(builder::setContentIntent)
 
         content.subText?.let(builder::setSubText)
         content.accentColor?.let(builder::setColor)
