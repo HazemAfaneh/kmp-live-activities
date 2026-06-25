@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.hazemafaneh.liveactivities"
-version = "0.1.0-SNAPSHOT"
+version = "0.1.0"
 
 kotlin {
     explicitApi()
