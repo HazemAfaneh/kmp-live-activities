@@ -35,7 +35,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
-      - name: Run tests
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          arguments: ${{ matrix.target }}
+      - name: Run tests
+        run: ./gradlew ${{ matrix.target }}
