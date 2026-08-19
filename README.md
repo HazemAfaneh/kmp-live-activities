@@ -8,7 +8,7 @@ and **Android 16 Live Updates** (status-bar chip + top-of-shade) behind a single
 [![iOS 16.2+](https://img.shields.io/badge/iOS-16.2%2B-A78BFA?logo=apple&logoColor=white)](https://developer.apple.com/documentation/activitykit)
 [![License](https://img.shields.io/badge/license-Apache%202.0-lightgrey)](LICENSE)
 
-> See the [Pizza Delivery example app](https://github.com/hazemafaneh/LiveActivitiesExample) for a
+> See the [Pizza Delivery example app](https://github.com/HazemAfaneh/LiveActivitiesExample) for a
 > full end-to-end integration on both platforms.
 
 ---
@@ -444,7 +444,7 @@ final class LiveActivityKitBridge: LiveActivityBridge {
 
 ## Example app
 
-[**LiveActivitiesExample**](https://github.com/hazemafaneh/LiveActivitiesExample) is a full KMP
+[**LiveActivitiesExample**](https://github.com/HazemAfaneh/LiveActivitiesExample) is a full KMP
 project (Android + iOS) showing a **pizza delivery tracker** that moves through all four delivery
 stages: *Preparing → On the way → Arriving → Delivered*.
 
