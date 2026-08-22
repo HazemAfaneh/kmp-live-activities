@@ -261,7 +261,7 @@ A handle to a running activity. Stays usable until `status` reaches `Dismissed`.
 | `attributes` | `A` | The static attributes set at start time. |
 | `state` | `StateFlow<S>` | The latest content state; emits on every update. |
 | `pushToken` | `StateFlow<String?>` | APNs push token (iOS only, when `PushType.Token` is used). Arrives asynchronously. |
-| `status` | `StateFlow<LiveActivityStatus>` | Lifecycle state: `Active → Stale → Ended → Dismissed`. |
+| `status` | `StateFlow<LiveActivityStatus>` | Lifecycle state: `Active → Stale → Ended → Dismissed`. The system can end an activity on its own — see [Lifecycle and platform limits](#lifecycle-and-platform-limits). |
 
 ### `DismissalPolicy`
 
@@ -289,6 +289,68 @@ LiveActivityConfig(
     ),
 )
 ```
+
+---
+
+## Lifecycle and platform limits
+
+An activity does not only end when you call `end()`. Both platforms retire activities on their
+own, and iOS limits how often you may update one. Treat `activity.status` as the source of truth
+rather than assuming an activity you started is still alive.
+
+```kotlin
+val activity = LiveActivityManager.start(attributes, state).getOrThrow()
+
+scope.launch {
+    activity.status.collect { status ->
+        when (status) {
+            LiveActivityStatus.Active    -> { /* visible, accepting updates */ }
+            LiveActivityStatus.Stale     -> { /* iOS only: no update within staleAfter */ }
+            LiveActivityStatus.Ended     -> { /* finished, still briefly on screen */ }
+            LiveActivityStatus.Dismissed -> { /* gone; the handle is now terminal */ }
+        }
+    }
+}
+```
+
+### The system can end an activity without you
+
+| Platform | Behaviour |
+|---|---|
+| iOS 18+ | The system ends an activity after **12 hours** of active time. |
+| iOS 16.2 – 17 | The system ends it after **8 hours**, then leaves it on the Lock Screen for up to 4 more hours (12 hours total) before removing it. |
+| iOS (any) | The user can dismiss it from the Lock Screen at any point. |
+| Android | A Live Update stays until you end it or the user dismisses the notification. There is no time limit. |
+
+In every case the library reports the transition: on iOS it observes
+`Activity.activityStateUpdates` and forwards it, on Android the dismiss receiver does the same.
+You will see `Ended` and then `Dismissed` on `status` exactly as if you had called `end()`
+yourself. Nothing vanishes silently.
+
+### Update throttling (iOS)
+
+ActivityKit gives each app a budget for how frequently it may refresh an activity. Exceeding it
+is not fatal, but the system may drop or defer updates, and a `start` rejected for budget reasons
+comes back as `LiveActivityException.BudgetExceeded`.
+
+A throttled `update()` has **no** failure path — ActivityKit accepts the call and the system
+decides whether to render it. Design for update rates measured in minutes, not seconds. Anything
+that changes every tick — a countdown, an elapsed timer — should render itself rather than be
+pushed through `update()`: use `StatusChipConfig.Chronometer` on Android and a relative-date
+`Text` in your SwiftUI view on iOS. If you need frequent *push* updates, add
+`NSSupportsLiveActivitiesFrequentUpdates` to your app's `Info.plist`; the budget still applies.
+
+Android has no equivalent throttle, but each update re-posts a notification, so the same advice
+about update frequency holds for battery reasons.
+
+### Platform differences worth knowing
+
+| | iOS | Android |
+|---|---|---|
+| `staleAfter` / `Stale` status | Supported; maps to ActivityKit's `staleDate`. | Ignored; `Stale` is never emitted. |
+| Maximum active duration | 12 hours (8 on iOS 17 and earlier). | Unlimited. |
+| Content state size | 4 KB, enforced by the system. | No hard limit. |
+| Push updates | Per-activity APNs token (see below). | FCM data message via `LiveActivityPushHandler`. |
 
 ---
 
@@ -341,7 +403,11 @@ the same schema the library produces when calling `update()` locally.
 
 ### iOS (APNs)
 
-Request an APNs push token with `pushType = PushType.Token`, then observe it on the activity handle:
+This token is **per activity**, not your app's APNs device token. Every activity gets its own,
+it can be reissued while the activity runs, and it only arrives after `start` returns — so collect
+it from the flow and register it against `activity.id` rather than reading it once.
+
+Request one with `pushType = PushType.Token`, then observe it on the activity handle:
 
 ```kotlin
 val activity = LiveActivityManager.start(
