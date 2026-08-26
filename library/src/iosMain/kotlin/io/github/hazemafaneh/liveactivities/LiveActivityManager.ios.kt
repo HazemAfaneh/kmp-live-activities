@@ -17,8 +17,9 @@ import kotlin.time.ExperimentalTime
  * iOS implementation of [LiveActivityManager], backed by `ActivityKit` through the companion
  * `KMPLiveActivities` Swift package.
  *
- * The Swift package must call [register] once at launch (`KMPLiveActivities.register()`). Until
- * it does, every operation fails fast. Attributes and content states are serialized to JSON and
+ * The consuming app must call [register] once at launch, from Swift:
+ * `LiveActivityManager.shared.register(bridge: LiveActivityKitBridge())`. Until it does, every
+ * operation fails fast. Attributes and content states are serialized to JSON and
  * handed to the Swift bridge, which renders the UI in a SwiftUI Widget Extension.
  */
 public actual object LiveActivityManager {
@@ -38,8 +39,8 @@ public actual object LiveActivityManager {
         _areActivitiesEnabled.asStateFlow()
 
     /**
-     * Installs the `ActivityKit` [bridge]. Called once by `KMPLiveActivities.register()` from
-     * the consuming app's Swift entry point.
+     * Installs the `ActivityKit` [bridge]. Called once from the consuming app's Swift entry
+     * point, as `LiveActivityManager.shared.register(bridge: LiveActivityKitBridge())`.
      */
     public fun register(bridge: LiveActivityBridge) {
         this.bridge = bridge
@@ -238,8 +239,8 @@ public actual object LiveActivityManager {
     private fun randomId(): String = Random.nextLong().toULong().toString(16)
 
     private fun notRegistered(): Throwable = IllegalStateException(
-        "The KMPLiveActivities Swift package is not registered. " +
-            "Call KMPLiveActivities.register() once at app launch.",
+        "The KMPLiveActivities Swift package is not registered. Call " +
+            "LiveActivityManager.shared.register(bridge:) once at app launch, from Swift.",
     )
 
     private class TrackedActivity(
